@@ -7,7 +7,7 @@ class Results extends React.Component {
 		return(
 			<div className='Results'>
 				<h2> Results </h2>
-				<TrackList />
+				<TrackList tracklist={this.props.tracklist} actionIcon="+" onClick={this.props.onClick} />
 			</div>
 		)
 	}

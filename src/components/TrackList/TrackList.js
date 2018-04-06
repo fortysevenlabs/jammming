@@ -1,36 +1,15 @@
 import React from 'react';
 import './TrackList.css';
+import Track from '../Track/Track';
 
-// let track = {};
-// let tracks = [track, track, track];
 
 class TrackList extends React.Component {
 	render() {
 		return (
 			<div className="TrackList">
-				<div className="Track">
-					<div className="Track-information">
-						<h3> I Won't Let You Go </h3>
-						<p> Switchfoot | I Won't Let You Go</p>
-					</div>
-					<a className="Track-action">+</a>
-				</div>
-
-				<div className="Track">
-					<div className="Track-information">
-						<h3> I Won't Let You Go </h3>
-						<p> Switchfoot | I Won't Let You Go</p>
-					</div>
-					<a className="Track-action">+</a>
-				</div>
-
-				<div className="Track">
-					<div className="Track-information">
-						<h3> I Won't Let You Go </h3>
-						<p> Switchfoot | I Won't Let You Go</p>
-					</div>
-					<a className="Track-action">+</a>
-				</div>
+				{console.log(this.props)}
+				{console.log(this.props.tracklist)}
+				{this.props.tracklist.map((track, index) => { return <Track key={index} track={track} actionIcon={this.props.actionIcon} onClick={this.props.onClick} /> })}
 			</div>
 		)
 	}
