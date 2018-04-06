@@ -10,8 +10,6 @@ class Track extends React.Component {
 	// when to use "e" argument
 	// when to preventDefault();
 	handleClick() {
-		// console.log(this.props.actionIcon);
-		// console.log(this.props.track);
 		this.props.onClick(this.props.actionIcon, this.props.track);
 	}
 
@@ -19,7 +17,6 @@ class Track extends React.Component {
 		return (
 			<div className="Track">
 				<div className="Track-information">
-					{/*{console.log(this.props.track)}*/}
 					<h3> { this.props.track.name } </h3>
 					<p> {this.props.track.artists[0].name} | {this.props.track.album.name} </p>
 				</div>
