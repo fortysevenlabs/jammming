@@ -14,6 +14,7 @@ class App extends Component {
 			playlist: []
 		};
 		this.updatePlaylist = this.updatePlaylist.bind(this);
+		this.savePlaylist = this.savePlaylist.bind(this);
 		this.searchSpotify = this.searchSpotify.bind(this);
 	}
 
@@ -26,8 +27,8 @@ class App extends Component {
 			// => it returns the current array length.
 			const newPlaylist = this.state.playlist;
 			newPlaylist.push(track);
-			console.log(track);
-			console.log(newPlaylist);
+			// console.log(track);
+			// console.log(newPlaylist);
 			this.setState({playlist: newPlaylist});
 		} else if (action === "-") {
 			// this mutates the tracklist element of state, why?
@@ -40,13 +41,26 @@ class App extends Component {
 
 	}
 
+	savePlaylist(playlist) {
+		Spotify.save(playlist);
+		this.setState({playlist: []});
+	}
+
 	searchSpotify(term) {
-		// Spotify.search(term).then(
-		// 	response => this.setState({tracklist: response})
-		// )
-		let newTracklist = Spotify.search(term);
-		// console.log(newTracklist);
-		this.setState({tracklist: newTracklist});
+		Spotify.search(term).then(
+			response => this.setState({tracklist: response})
+		)
+		// Methods that involve promises
+		// must be chained with then:
+		// If you don't use then, the setState
+		// could trigger before you get searchResults.
+		// Then your searchResults would be empty even
+		// though the promise resolved afterwards with
+		// the data so no error is shown.
+		// let newtracklist = spotify.search(term);
+		// this.setstate({tracklist: newtracklist});
+		// console.log(newtracklist);
+		// console.log(this.state);
 	}
 
   render() {
@@ -54,8 +68,11 @@ class App extends Component {
       <div className="App">
 				<Search searchSpotify={this.searchSpotify} />
 	      <div className="App-playlist">
-		      <Results tracklist={this.state.tracklist} onClick={this.updatePlaylist} />
-		      <Playlist playlist={this.state.playlist} onClick={this.updatePlaylist} />
+		      <Results tracklist={this.state.tracklist}
+		               onClick={this.updatePlaylist} />
+		      <Playlist playlist={this.state.playlist}
+		                onMinusClick={this.updatePlaylist}
+		                onSaveClick={this.savePlaylist} />
 	      </div>
       </div>
     );
