@@ -25,18 +25,21 @@ class App extends Component {
 			// to the new variable breaking tracklist.map
 			// does push function return number of items added
 			// => it returns the current array length.
-			const newPlaylist = this.state.playlist;
-			newPlaylist.push(track);
+			const updatedPlaylist = this.state.playlist;
+			updatedPlaylist.push(track);
+			const updatedTracklist = this.state.tracklist.filter((item) => item != track);
 			// console.log(track);
 			// console.log(newPlaylist);
-			this.setState({playlist: newPlaylist});
+			this.setState({playlist: updatedPlaylist, tracklist: updatedTracklist});
 		} else if (action === "-") {
 			// this mutates the tracklist element of state, why?
 			// let oldPlaylist = this.state.playlist;
 			// let trackIndex = oldPlaylist.indexOf(track);
 			// oldPlaylist.splice(trackIndex, 1);
-			let updatedPlaylist = this.state.playlist.filter((item) => item !== track);
-			this.setState({playlist: updatedPlaylist});
+			const updatedTracklist = this.state.tracklist;
+			updatedTracklist.push(track);
+			const updatedPlaylist = this.state.playlist.filter((item) => item !== track);
+			this.setState({playlist: updatedPlaylist, tracklist: updatedTracklist});
 		}
 
 	}

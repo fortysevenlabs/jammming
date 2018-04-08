@@ -19,7 +19,7 @@ class Playlist extends React.Component {
 				<TrackList tracklist={this.props.playlist}
 				           actionIcon="-"
 				           onClick={this.props.onMinusClick}/>
-				<a className="Playlist-save"onClick={this.handleSaveClick}> SAVE TO SPOTIFY </a>
+				<a className="Playlist-save" onClick={this.handleSaveClick}> SAVE TO SPOTIFY </a>
 			</div>
 		)
 	}
