@@ -6,40 +6,34 @@ import Results from '../Results/Results';
 import Spotify from '../../util/Spotify';
 
 class App extends Component {
-	// no props needed since its app
 	constructor() {
 		super();
+		// set initial state
 		this.state = {
-			tracklist: [],
+			resultlist: [],
 			playlist: []
 		};
-		this.updatePlaylist = this.updatePlaylist.bind(this);
+		// bind
+		this.TrackLists = this.updateTrackLists.bind(this);
 		this.savePlaylist = this.savePlaylist.bind(this);
 		this.searchSpotify = this.searchSpotify.bind(this);
 	}
 
-	updatePlaylist(action, track) {
+	updateTrackLists(action, track) {
 		if (action === "+") {
-		  // initially I assigned array.push(track) to
-		  // a new variable but that stored an integer
-			// to the new variable breaking tracklist.map
-			// does push function return number of items added
-			// => it returns the current array length.
+			// add to playlist
 			const updatedPlaylist = this.state.playlist;
 			updatedPlaylist.push(track);
-			const updatedTracklist = this.state.tracklist.filter((item) => item != track);
-			// console.log(track);
-			// console.log(newPlaylist);
-			this.setState({playlist: updatedPlaylist, tracklist: updatedTracklist});
+			// remove from result list
+			const updatedResultlist = this.state.resultlist.filter((item) => item !== track);
+			this.setState({playlist: updatedPlaylist, resultlist: updatedResultlist});
 		} else if (action === "-") {
-			// this mutates the tracklist element of state, why?
-			// let oldPlaylist = this.state.playlist;
-			// let trackIndex = oldPlaylist.indexOf(track);
-			// oldPlaylist.splice(trackIndex, 1);
-			const updatedTracklist = this.state.tracklist;
-			updatedTracklist.push(track);
+			// move track back to result list
+			const updatedResultlist = this.state.resultlist;
+			updatedResultlist.push(track);
+			// remove from playlist
 			const updatedPlaylist = this.state.playlist.filter((item) => item !== track);
-			this.setState({playlist: updatedPlaylist, tracklist: updatedTracklist});
+			this.setState({playlist: updatedPlaylist, resultlist: updatedResultlist});
 		}
 
 	}
@@ -51,18 +45,15 @@ class App extends Component {
 
 	searchSpotify(term) {
 		Spotify.search(term).then(
-			response => this.setState({tracklist: response})
+			response => this.setState({resultlist: response})
 		)
-		// Methods that involve promises
-		// must be chained with then:
-		// If you don't use then, the setState
-		// could trigger before you get searchResults.
-		// Then your searchResults would be empty even
-		// though the promise resolved afterwards with
-		// the data so no error is shown.
-		// let newtracklist = spotify.search(term);
-		// this.setstate({tracklist: newtracklist});
-		// console.log(newtracklist);
+		// Note: methods that involve promises must be chained with then.
+		// If you don't use then, the setState could trigger before you get searchResults.
+		// Then your searchResults would be empty even though the promise resolved afterwards
+		// with the data so no error is shown. So, don't do this:
+		// let newresultlist = spotify.search(term);
+		// this.setstate({resultlist: newresultlist});
+		// console.log(newresultlist);
 		// console.log(this.state);
 	}
 
@@ -71,10 +62,10 @@ class App extends Component {
       <div className="App">
 				<Search searchSpotify={this.searchSpotify} />
 	      <div className="App-playlist">
-		      <Results tracklist={this.state.tracklist}
-		               onClick={this.updatePlaylist} />
+		      <Results resultlist={this.state.resultlist}
+		               onPlusClick={this.updateTrackLists} />
 		      <Playlist playlist={this.state.playlist}
-		                onMinusClick={this.updatePlaylist}
+		                onMinusClick={this.updateTrackLists}
 		                onSaveClick={this.savePlaylist} />
 	      </div>
       </div>

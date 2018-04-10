@@ -7,8 +7,6 @@ class Track extends React.Component {
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	// when to use "e" argument
-	// when to preventDefault();
 	handleClick() {
 		this.props.onClick(this.props.actionIcon, this.props.track);
 	}

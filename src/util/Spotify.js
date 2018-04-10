@@ -1,11 +1,9 @@
 import qs from 'querystring';
 
+// TODO better understand when to use let/const
 let Spotify = {};
 let access_token;
-
 const clientId = '943849d59d434742bfad1a401fa9aab0';
-// TODO - Spotify didn't need CORS headers. Review.
-// const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/'
 
 Spotify.search = (term) => {
 	access_token = Spotify.authorizeAndGetToken();
@@ -69,7 +67,6 @@ Spotify.createPlaylist = () => {
 	})
 }
 
-// Save added tracks to a new playlist
 Spotify.save = (playlist) => {
 	let tracks = playlist.map((track) => track.uri);
 
@@ -110,6 +107,8 @@ Spotify.authorizeAndGetToken = () => {
 	}
 	const spotifyAuthorizeUrl = 'https://accounts.spotify.com/authorize/?' + qs.stringify(params);
 
+	// this logic can be improved further
+	// consider storing the token in localStorage or sessionStorage
 	if (access_token) {
 		return access_token;
 	} else if (!access_token &&
