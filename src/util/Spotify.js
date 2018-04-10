@@ -1,23 +1,20 @@
 import qs from 'querystring';
 
 let Spotify = {};
+let access_token;
 
 const clientId = '943849d59d434742bfad1a401fa9aab0';
-let access_token;
-// let expires_in;
-
-// urls
-// TODO cors not needed - why?
+// TODO - Spotify didn't need CORS headers. Review.
 // const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/'
 
 Spotify.search = (term) => {
-	// consts
-	Spotify.authorize();
+	access_token = Spotify.authorizeAndGetToken();
 	const spotifySearchUrl = `https://api.spotify.com/v1/search?query=${term}&type=track`;
 
 	return fetch(spotifySearchUrl, {
 		headers: {
-			Authorization: `Bearer ${access_token}`
+			Authorization: `Bearer ${access_token}`,
+			'Content-Type': 'application/json'
 		}
 	}).then(
 		response => {
@@ -32,8 +29,9 @@ Spotify.search = (term) => {
 };
 
 Spotify.getUserId = () => {
+	access_token = Spotify.authorizeAndGetToken();
 	const spotifyUserProfileUrl = 'https://api.spotify.com/v1/me';
-	Spotify.authorize();
+
 	return fetch(spotifyUserProfileUrl, {
 		headers: {
 			Authorization: `Bearer ${access_token}`,
@@ -47,16 +45,7 @@ Spotify.getUserId = () => {
 }
 
 Spotify.createPlaylist = () => {
-  // TODO use authorize better
-	// should authorize also be chained
-	// remember that authorize sets global var access_token
-	// and not return access_token, could that also i think
-	// getUserId calls authorize
-	// Spotify.authorize();
-
-	// TODO check better alternatives
-	// if we don't return this,
-	// it won't be a promise
+	// return promise to allow chaining in Spotify.save()
 	return Spotify.getUserId().then(response => {
 		const spotifyCreatePlaylistUrl = `https://api.spotify.com/v1/users/${response.id}/playlists`;
 
@@ -80,6 +69,7 @@ Spotify.createPlaylist = () => {
 	})
 }
 
+// Save added tracks to a new playlist
 Spotify.save = (playlist) => {
 	let tracks = playlist.map((track) => track.uri);
 
@@ -109,8 +99,8 @@ Spotify.save = (playlist) => {
 	)
 }
 
-Spotify.authorize = () => {
-	// query string
+Spotify.authorizeAndGetToken = () => {
+	// params for query string
 	const params = {
 		client_id: clientId,
 		redirect_uri: 'http://localhost:3000',
@@ -118,17 +108,17 @@ Spotify.authorize = () => {
 		response_type: 'token',
 		state: Math.random().toString(36).substring(2, 15),
 	}
-
 	const spotifyAuthorizeUrl = 'https://accounts.spotify.com/authorize/?' + qs.stringify(params);
 
-	// TODO deal with access_token expiry automatically
 	if (access_token) {
 		return access_token;
 	} else if (!access_token &&
 		         window.location.href.match(/access_token=([^&]*)/) &&
 		         window.location.href.match(/expires_in=([^&]*)/) ) {
 		access_token = window.location.href.match(/access_token=([^&]*)/)[1];
-		// expires_in = window.location.href.match(/expires_in=([^&]*)/)[1];
+		let expires_in = Number(window.location.href.match(/expires_in=([^&]*)/)[1]);
+		window.location.hash = '';
+		return access_token;
 	} else {
 		window.location.href = spotifyAuthorizeUrl;
 	}
